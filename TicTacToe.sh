@@ -12,6 +12,7 @@ function displayBoard()
 	printf "\t\t\t _____|_____|_____\n"
 	printf "\t\t\t      |     |     \n"
 	printf "\t\t\t  ${board[6]}   |  ${board[7]}  |  ${board[8]}  \n"
+	printf "\t\t\t      |     |     \n"
 }
 function assiningLetter()
 {
@@ -29,6 +30,19 @@ function assiningLetter()
 	esac
 	checkToss
 }
+#CHOOSE VALID CELL
+function playerTurn()
+{
+	printf "Enter index 0 to 8 to choose position in board\n"
+	read userInput
+		if [[ (($userInput -lt 9)) && (("${board[$userInput]}"!=X || "${board[$userInput]}"!=O)) ]]
+		then
+			board[$userInput]="$player"
+		else
+			printf "Enter valid input\n"
+			playerTurn
+		fi
+}
 function checkToss()
 {
 	#GENERATING RANDOM VALUE 1 FOR PALYER 2 FOR COMPUTER
@@ -43,6 +57,8 @@ function checkToss()
 			printf "Computer assinged: $computer\nPlayer assinged: $player\n"
 			;;
 	esac
+displayBoard
+playerTurn
 }
 assiningLetter
 displayBoard
