@@ -1,6 +1,7 @@
 #!/bin/bash -x
 printf "\t\t\tWelcome to tic tac toe game \n"
 #CONSTANT VARIABLE
+EMPTY=" "
 declare -a board
 board=(" " " " " " " " " " " " " " " " " ")
 function displayBoard()
@@ -40,7 +41,6 @@ function playerTurn()
 		if [[ $userInput -lt 9 ]] && [[ ${board[$userInput]} != "X" && ${board[$userInput]} != "O" ]]
 		then
 			#USING CLEAR TO CLEAN PREVIOUS PLAYED
-			clear
 			printf "Player turn\n"
 			board[$userInput]="$player"
 			displayBoard
@@ -113,46 +113,133 @@ function gameOver()
 	fi
 	echo $result
 }
+#COMPUTER FILL AUTOMATIC TO WIN
+function computerFillAutomatic()
+{
+	local rowIndex=0
+	local columnIndex=0
+	#CHECKING FOR ROWS
+	while(($rowIndex<8))
+	do
+		if [[ ${board[$rowIndex]} == $computer && ${board[$(($rowIndex+1))]} == $computer && ${board[$(($rowIndex+2))]} == $EMPTY ]]
+		then
+			board[$(($rowIndex+2))]=$computer
+			compPlay=1
+			return
+		elif [[ ${board[$rowIndex]} == $computer && ${board[$(($rowIndex+2))]} == $computer && ${board[$(($rowIndex+1))]} == $EMPTY ]]
+		then
+			board[$(($rowIndex+1))]=$computer
+			compPlay=1
+			return
+		elif [[ ${board[$(($rowIndex+2))]} == $computer && ${board[$(($rowIndex+1))]} == $computer && ${board[$rowIndex]} == $EMPTY ]]
+		then
+			board[$rowIndex]=$computer
+			compPlay=1
+			return
+		fi
+		rowIndex=$(($rowIndex+1))
+	done
+	#CHECKING FOR COLUMNS
+	while(($columnIndex<8))
+	do
+		if [[ ${board[$columnIndex]} == $computer && ${board[$(($columnIndex+3))]} == $computer && ${board[$(($columnIndex+6))]} == $EMPTY ]]
+		then
+			board[$(($columnIndex+6))]=$computer
+			compPlay=1
+			return
+		elif [[ ${board[$columnIndex]} == $computer && ${board[$(($columnIndex+6))]} == $computer && ${board[$(($columnIndex+3))]} == $EMPTY ]]
+		then
+			board[$(($columnIndex+3))]=$computer
+			compPlay=1
+		return
+		elif [[ ${board[$(($columnIndex+3))]} == $computer && ${board[$(($columnIndex+6))]} == $computer && ${board[$columnIndex]} == $EMPTY ]]
+		then
+			board[$columnIndex]=$computer
+			compPlay=1
+			return
+		fi
+		columnIndex=$(($columnIndex+1))
+	done
+	#CHECKING FOR  \  DIAGONAL
+	if [[ ${board[0]} == $computer && ${board[4]} == $computer && ${board[8]} == $EMPTY ]]
+	then
+		board[8]=$computer
+		compPlay=1
+		return
+	elif [[ ${board[0]} == $computer && ${board[8]} == $computer && ${board[4]} == $EMPTY ]]
+	then
+		board[4]=$computer
+		compPlay=1
+		return
+	elif [[ ${board[8]} == $computer && ${board[4]} == $computer && ${board[0]} == $EMPTY ]]
+	then
+		board[0]=$computer
+		compPlay=1
+		return
+	fi
+	#CHECKING FOR  /  DIAGONAL
+	if [[ ${board[2]} == $computer && ${board[4]} == $computer && ${board[6]} == $EMPTY ]]
+	then
+		board[6]=$computer
+		compPlay=1
+		return
+	elif [[ ${board[2]} == $computer && ${board[6]} == $computer && ${board[4]} == $EMPTY ]]
+	then
+		board[4]=$computer
+		compPlay=1
+		return
+	elif [[ ${board[6]} == $computer && ${board[4]} == $computer && ${board[2]} == $EMPTY ]]
+	then
+		board[2]=$computer
+		compPlay=1
+		return
+	fi
+}
 #LOGIC FOR COMPUTER TURN
 function computerTurn()
 {
-	computerPlay=$((RANDOM%8))
-	if [[ ${board[$computerPlay]} != "X" ]] && [[ ${board[$computerPlay]} != "O" ]]
+	compPlay=0
+	computerFillAutomatic
+	if(($compPlay==0))
 	then
-		echo "Computer turn"
-		board[$computerPlay]="$computer"
-		displayBoard
-	else
-		computerTurn $computer
+		computerPlay=$((RANDOM%8))
+		if [[ ${board[$computerPlay]} != "X" ]] && [[ ${board[$computerPlay]} != "O" ]]
+		then
+			echo "Computer turn"
+			board[$computerPlay]="$computer"
+			displayBoard
+		else
+			computerTurn $computer
+		fi
 	fi
 }
 	#LOGIC FOR TO PLAY UPTO WIN OR DRAW
-   assiningLetter
+	assiningLetter
 	temp=0
 	if [[ "$tossComputer" = "computer" ]]
 	then
-	   temp=1
+		temp=1
 	fi
 	while (( 0==0 ))
 	do
-	   if(( $temp%2==0 ))
-	   then
-	      playerTurn
+		if(( $temp%2==0 ))
+		then
+			playerTurn
 			result="$(gameOver $player)"
-	      if [[ $result == "Win" ||  $result == "Draw" ]]
-	      then
-	         printf " Player $result\n"
-	         break
-	      fi
-	   else
-	      computerTurn
-			result="$(gameOver $computer)"
-	      if [[ $result == "Win"  ||  $result == "Draw" ]]
-	      then
-	         printf " Computer $result\n"
-	         break
-	      fi
-	   fi
-	   temp=$(($temp+1))
+			if [[ $result == "Win" ||  $result == "Draw" ]]
+			then
+				printf " Player $result\n"
+				break
+			fi
+			else
+				computerTurn
+				result="$(gameOver $computer)"
+			if [[ $result == "Win"  ||  $result == "Draw" ]]
+			then
+				printf " Computer $result\n"
+				break
+			fi
+		fi
+		temp=$(($temp+1))
 	done
 displayBoard
