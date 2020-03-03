@@ -34,16 +34,19 @@ function assiningLetter()
 }
 #CHOOSE VALID CELL
 function playerTurn()
-{	#player=$1
-	toss=$((RANDOM%2+1))
+{
 	printf "Enter index 0 to 8 to choose position in board\n"
 	read userInput
-		if [[ (($userInput -lt 9)) && (("${board[$userInput]}"!=X || "${board[$userInput]}"!=O)) ]]
+		if [[ $userInput -lt 9 ]] && [[ ${board[$userInput]} != "X" && ${board[$userInput]} != "O" ]]
 		then
+			#USING CLEAR TO CLEAN PREVIOUS PLAYED
+			clear
+			printf "Player turn\n"
 			board[$userInput]="$player"
+			displayBoard
 		else
 			printf "Enter valid input\n"
-			playerTurn
+			playerTurn $player
 		fi
 }
 #LOGIC FOR TO ASSIGN FIRST CHANCE
@@ -55,63 +58,101 @@ function checkToss()
 		1)
 			printf "Player play first\n"
 			printf "Player assinged: $player\nComputer assinged: $computer\n"
+			displayBoard
 			;;
 		2)
 			printf "Computer play first\n"
 			printf "Computer assinged: $computer\nPlayer assinged: $player\n"
+			tossComputer="computer"
 			;;
 	esac
 }
-assiningLetter
+#assiningLetter
 #LOGIC FOR WIN  DRAW AND NEXT CHANCE
-function gameOver
+function gameOver()
 {
 	if [[ "${board[0]} ${board[1]} ${board[2]}" = "X X X" ||  "${board[0]} ${board[1]} ${board[2]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[3]} ${board[4]} ${board[5]}" = "X X X" ||  "${board[3]} ${board[4]} ${board[5]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[6]} ${board[7]} ${board[8]}" = "X X X" ||  "${board[6]} ${board[7]} ${board[8]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[0]} ${board[3]} ${board[6]}" = "X X X" ||  "${board[0]} ${board[3]} ${board[6]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[1]} ${board[4]} ${board[7]}" = "X X X" ||  "${board[1]} ${board[4]} ${board[7]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[2]} ${board[5]} ${board[8]}" = "X X X" ||  "${board[2]} ${board[5]} ${board[8]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[0]} ${board[4]} ${board[8]}" = "X X X" ||  "${board[0]} ${board[4]} ${board[8]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	elif [[ "${board[6]} ${board[4]} ${board[2]}" = "X X X" ||  "${board[6]} ${board[4]} ${board[2]}" = "O O O" ]]
 	then
-		result="\t!!! Win !!!\n"
+		result="Win"
 	else
 		temp=0
 		for(( index=0; index<${#board[@]}; index++ ))
 		do
-			if [[ "${board[$index]}"!=X || "${board[$index]}"!=O ]]
+			if [[ ${board[$index]} != "X" && ${board[$index]} != "O" ]]
 			then
 				temp=1
 			fi
 		done
 	if(( $temp==1 ))
 	then
-		result="Change\n"
+		result="Change"
 	else
-		result="Draw\n"
+		result="Draw"
 	fi
 	fi
 	echo $result
 }
-while((0==0))
-do
+#LOGIC FOR COMPUTER TURN
+function computerTurn()
+{
+	computerPlay=$((RANDOM%8))
+	if [[ ${board[$computerPlay]} != "X" ]] && [[ ${board[$computerPlay]} != "O" ]]
+	then
+		echo "Computer turn"
+		board[$computerPlay]="$computer"
+		displayBoard
+	else
+		computerTurn $computer
+	fi
+}
+	#LOGIC FOR TO PLAY UPTO WIN OR DRAW
+   assiningLetter
+	temp=0
+	if [[ "$tossComputer" = "computer" ]]
+	then
+	   temp=1
+	fi
+	while (( 0==0 ))
+	do
+	   if(( $temp%2==0 ))
+	   then
+	      playerTurn
+			result="$(gameOver $player)"
+	      if [[ $result == "Win" ||  $result == "Draw" ]]
+	      then
+	         printf " Player $result\n"
+	         break
+	      fi
+	   else
+	      computerTurn
+			result="$(gameOver $computer)"
+	      if [[ $result == "Win"  ||  $result == "Draw" ]]
+	      then
+	         printf " Computer $result\n"
+	         break
+	      fi
+	   fi
+	   temp=$(($temp+1))
+	done
 displayBoard
-playerTurn
-result="$(gameOver)"
-printf "$result\n"
-done
