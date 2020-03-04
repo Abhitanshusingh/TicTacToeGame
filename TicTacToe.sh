@@ -327,7 +327,17 @@ function fillCorner()
 			fi
 	esac
 }
-
+#LOGIC TO FILL IN CENTER
+function fillCenter()
+{
+	comPlay=0
+	if [[ $board[4] == $EMPTY ]]
+	then
+		board[4]=$computer
+		comPlay=1
+		return
+	fi
+}
 #LOGIC FOR COMPUTER TURN
 function computerTurn()
 {
@@ -340,6 +350,10 @@ function computerTurn()
 	if(($compPlay==0))
 	then
 		fillCorner
+	fi
+	if(($compPlay==0))
+	then
+		fillCenter
 	fi
 	if(($compPlay==0))
 	then
