@@ -358,7 +358,7 @@ function fillSides()
 				compPlay=1
 				return
 			else
-				fillCorner
+				fillSides
 			fi
 			;;
 		1)
@@ -368,7 +368,7 @@ function fillSides()
 				compPlay=1
 				return
 			else
-				fillCorner
+				fillSides
 			fi
 			;;
 		2)
@@ -378,7 +378,7 @@ function fillSides()
 				compPlay=1
 				return
 			else
-				fillCorner
+				fillSides
 			fi
 			;;
 		3)
@@ -388,7 +388,7 @@ function fillSides()
 				compPlay=1
 				return
 			else
-				fillCorner
+				fillSides
 			fi
 			;;
 	esac
