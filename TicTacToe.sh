@@ -16,6 +16,7 @@ function displayBoard()
 	printf "\t\t\t   ${board[6]}  |  ${board[7]}  |  ${board[8]}  \n"
 	printf "\t\t\t      |     |     \n\n\n"
 }
+
 #ASSINING LETTER TO PLAYER AND COMPUTER
 function assiningLetter()
 {
@@ -33,6 +34,7 @@ function assiningLetter()
 	esac
 	checkToss
 }
+
 #CHOOSE VALID CELL
 function playerTurn()
 {
@@ -41,7 +43,7 @@ function playerTurn()
 		if [[ $userInput -lt 9 ]] && [[ ${board[$userInput]} != "X" && ${board[$userInput]} != "O" ]]
 		then
 			#USING CLEAR TO CLEAN PREVIOUS PLAYED
-			printf "Player turn\n"
+			printf "!!! Player turn !!!\n\n"
 			board[$userInput]="$player"
 		else
 			printf "Enter valid input\n"
@@ -49,6 +51,7 @@ function playerTurn()
 		fi
 	displayBoard
 }
+
 #LOGIC FOR TO ASSIGN FIRST CHANCE
 function checkToss()
 {
@@ -67,7 +70,7 @@ function checkToss()
 			;;
 	esac
 }
-#assiningLetter
+
 #LOGIC FOR WIN  DRAW AND NEXT CHANCE
 function gameOver()
 {
@@ -114,6 +117,7 @@ function gameOver()
 	fi
 	echo $result
 }
+
 #COMPUTER FILL AUTOMATIC TO WIN
 function computerFillAutomatic()
 {
@@ -197,6 +201,7 @@ function computerFillAutomatic()
 		return
 	fi
 }
+
 #LOGIC FOR IF OPPONENT CAN WIN THEN BLOCK IT
 function blockPlayerWin()
 {
@@ -289,11 +294,11 @@ function fillCorner()
 		0)
 			if [[ ${board[0]} == $EMPTY ]]
 			then
-				display[0]=$computer
+				board[0]=$computer
 				compPlay=1
 				return
 			else
-				fillCorner $player
+				fillCorner
 			fi
 			;;
 		1)
@@ -303,7 +308,7 @@ function fillCorner()
 				compPlay=1
 			 return
 			else
-				fillCorner $player
+				fillCorner
 			fi
 			;;
 		2)
@@ -313,36 +318,88 @@ function fillCorner()
 				compPlay=1
 				return
 			else
-				fillCorner $player
+				fillCorner
 			fi
 			;;
 		3)
 			if [[ ${board[8]} == $EMPTY ]]
 			then
-				board[2]=$computer
+				board[8]=$computer
 				compPlay=1
 				return
 			else
-				fillCorner $player
+				fillCorner
 			fi
 	esac
 }
+
 #LOGIC TO FILL IN CENTER
 function fillCenter()
 {
-	comPlay=0
+	compPlay=0
 	if [[ $board[4] == $EMPTY ]]
 	then
 		board[4]=$computer
-		comPlay=1
+		compPlay=1
 		return
 	fi
 }
+
+#LOGIC FOR FILL IN SIDE
+function fillSides()
+{
+	compPlay=0
+	randomSide=$((RANDOM%4))
+	case $randomSide in
+		0)
+			if [[ ${board[1]} == $EMPTY ]]
+			then
+				board[1]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner
+			fi
+			;;
+		1)
+			if [[ ${board[3]} == $EMPTY ]]
+			then
+				board[3]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner
+			fi
+			;;
+		2)
+			if [[ ${board[5]} == $EMPTY ]]
+			then
+				board[5]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner
+			fi
+			;;
+		3)
+			if [[ ${board[7]} == $EMPTY ]]
+			then
+				board[7]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner
+			fi
+			;;
+	esac
+}
+
 #LOGIC FOR COMPUTER TURN
 function computerTurn()
 {
 	compPlay=0
 	computerFillAutomatic
+	printf "Computer turn !!!\n\n"
 	if(($compPlay==0))
 	then
 		blockPlayerWin
@@ -357,19 +414,12 @@ function computerTurn()
 	fi
 	if(($compPlay==0))
 	then
-		computerPlay=$((RANDOM%8))
-		if [[ ${board[$computerPlay]} != "X" ]] && [[ ${board[$computerPlay]} != "O" ]]
-		then
-			echo "Computer turn"
-			board[$computerPlay]="$computer"
-	else
-			computerTurn $computer
-		fi
+		fillSides
 	fi
 displayBoard
 }
 
-	#LOGIC FOR TO PLAY UPTO WIN OR DRAW
+#LOGIC FOR TO PLAY UPTO WIN OR DRAW
 function winOrDraw()
 {
 	temp=0
@@ -385,7 +435,7 @@ function winOrDraw()
 			result="$(gameOver $player)"
 			if [[ $result == "Win" ||  $result == "Draw" ]]
 			then
-				printf "!!! Computer $result !!!\n"
+				printf "Computer $result !!!\n"
 				break
 			fi
 			else
@@ -393,7 +443,7 @@ function winOrDraw()
 				result="$(gameOver $computer)"
 			if [[ $result == "Win"  ||  $result == "Draw" ]]
 			then
-				printf  "!!! Player $result !!!\n"
+				printf  "Player $result !!!\n"
 				break
 			fi
 		fi
