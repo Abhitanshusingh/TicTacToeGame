@@ -14,7 +14,7 @@ function displayBoard()
 	printf "\t\t\t _____|_____|_____\n"
 	printf "\t\t\t      |     |     \n"
 	printf "\t\t\t   ${board[6]}  |  ${board[7]}  |  ${board[8]}  \n"
-	printf "\t\t\t      |     |     \n\n"
+	printf "\t\t\t      |     |     \n\n\n"
 }
 #ASSINING LETTER TO PLAYER AND COMPUTER
 function assiningLetter()
@@ -56,12 +56,12 @@ function checkToss()
 	toss=$((RANDOM%2+1))
 	case $toss in
 		1)
-			printf "Player play first\n"
+			printf "!!! Player play first !!!\n\n"
 			printf "Player assinged: $player\nComputer assinged: $computer\n"
 			displayBoard
 			;;
 		2)
-			printf "Computer play first\n"
+			printf "!!! Computer play first !!!\n\n"
 			printf "Computer assinged: $computer\nPlayer assinged: $player\n"
 			tossComputer="computer"
 			;;
@@ -280,6 +280,54 @@ function blockPlayerWin()
 		return
 	fi
 }
+
+#LOGIC TO FILL IN CORNER
+function fillCorner()
+{
+	randomCorner=$((RANDOM%4))
+	case $randomCorner in
+		0)
+			if [[ ${board[0]} == $EMPTY ]]
+			then
+				display[0]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner $player
+			fi
+			;;
+		1)
+			if [[ ${board[2]} == $EMPTY ]]
+			then
+				board[2]=$computer
+				compPlay=1
+			 return
+			else
+				fillCorner $player
+			fi
+			;;
+		2)
+			if [[ ${board[6]} == $EMPTY ]]
+			then
+				board[6]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner $player
+			fi
+			;;
+		3)
+			if [[ ${board[8]} == $EMPTY ]]
+			then
+				board[2]=$computer
+				compPlay=1
+				return
+			else
+				fillCorner $player
+			fi
+	esac
+}
+
 #LOGIC FOR COMPUTER TURN
 function computerTurn()
 {
@@ -287,7 +335,11 @@ function computerTurn()
 	computerFillAutomatic
 	if(($compPlay==0))
 	then
-	blockPlayerWin
+		blockPlayerWin
+	fi
+	if(($compPlay==0))
+	then
+		fillCorner
 	fi
 	if(($compPlay==0))
 	then
@@ -302,6 +354,7 @@ function computerTurn()
 	fi
 displayBoard
 }
+
 	#LOGIC FOR TO PLAY UPTO WIN OR DRAW
 function winOrDraw()
 {
@@ -318,7 +371,7 @@ function winOrDraw()
 			result="$(gameOver $player)"
 			if [[ $result == "Win" ||  $result == "Draw" ]]
 			then
-				printf " Computer $result\n"
+				printf "!!! Computer $result !!!\n"
 				break
 			fi
 			else
@@ -326,7 +379,7 @@ function winOrDraw()
 				result="$(gameOver $computer)"
 			if [[ $result == "Win"  ||  $result == "Draw" ]]
 			then
-				printf  " player $result\n"
+				printf  "!!! Player $result !!!\n"
 				break
 			fi
 		fi
